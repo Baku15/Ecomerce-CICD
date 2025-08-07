@@ -31,4 +31,4 @@ jobs:
           context: ./Apli-Servi
           file: ./Apli-Servi/Dockerfile
           push: true
-          tags: freddychura93/CICDdockerdiplomadogithubactionsecomerce2025
+          tags: freddychura93/cicddockerdiplonadogithubactionsecomerce2025
