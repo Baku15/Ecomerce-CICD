@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: "default"
+    orgId: 1
+    folder: ""
+    type: file
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      # Update the below line if necessary to match the dashboard JSON filename
+      # and make sure the Prometheus data source name matches
+      jsonData: true
