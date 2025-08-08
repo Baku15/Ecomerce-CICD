@@ -24,8 +24,8 @@ services:
     volumes:
       - 'minio_data:/data'
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minio123minio
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minio123minio
 
   prometheus:
     image: prom/prometheus:v2.36.2
@@ -61,13 +61,15 @@ services:
       - postgres
       - minio
     environment:
-      SERVER_PORT: 8040
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ani
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123456
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESSKEY: minioadmin
       MINIO_SECRETKEY: minio123minio
+      SERVER_PORT: 8040
+    networks:
+      - minionetwork
 
 networks:
   minionetwork:
