@@ -9,7 +9,6 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    # Levantar servicio de PostgreSQL para los tests
     services:
       postgres:
         image: postgres:15.6
@@ -26,12 +25,10 @@ jobs:
           --health-retries 5
 
     env:
-      # Variables para que Spring Boot conecte a PostgreSQL
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ani
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ani
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123456
 
-      # Variables para Docker Hub login (debes tenerlas en Secrets)
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
@@ -45,7 +42,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Make mvnw executable
+        run: chmod +x ./Apli-Servi/mvnw
+
       - name: Build with Maven and run tests
+        working-directory: ./Apli-Servi
         run: ./mvnw clean package --no-transfer-progress
 
       - name: Login to Docker Hub
