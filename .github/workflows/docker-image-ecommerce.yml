@@ -25,10 +25,6 @@ jobs:
           --health-retries 5
 
     env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ani
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 123456
-
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
@@ -45,17 +41,20 @@ jobs:
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..30}; do
-            pg_isready -h 127.0.0.1 -p 5432 && break
+            pg_isready -h postgres -p 5432 && break
             echo "Waiting for Postgres to be ready..."
             sleep 2
           done
 
       - name: Build with Maven and run tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ani
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: 123456
         run: |
           cd Apli-Servi
           chmod +x ./mvnw
-          ./mvnw clean package --no-transfer-progress
-
+          ./mvnw clean package --no-transfer-progress -e -X
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
