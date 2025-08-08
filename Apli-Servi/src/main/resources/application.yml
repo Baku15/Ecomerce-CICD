@@ -1,29 +1,33 @@
 server:
-  port: ${SERVER_PORT:8040}
+  port: 8040
 
 spring:
   application:
     name: Apli-Servi
+
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/ani}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ani}
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:123456}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
+
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
   mvc:
-    pathmatch:
+    path match:
       matching-strategy: ant-path-matcher
 
 minio:
-  endpoint: ${MINIO_ENDPOINT:http://minio:9000}
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
   accessKey: ${MINIO_ACCESSKEY:minioadmin}
   secretKey: ${MINIO_SECRETKEY:minio123minio}
 
