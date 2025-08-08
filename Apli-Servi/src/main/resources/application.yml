@@ -1,43 +1,42 @@
 server:
-  port: 8040
+  port: ${SERVER_PORT:8040}
+
 spring:
   application:
     name: Apli-Servi
-  # Configuración de la base de datos PostgreSQL
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ani}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/ani}
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:123456}
     driver-class-name: org.postgresql.Driver
-  # Configuraciones de JPA
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
-  # Configuraciones de Servlet
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
   mvc:
-    path match:
+    pathmatch:
       matching-strategy: ant-path-matcher
+
 minio:
-  endpoint: http://localhost:9000
-  accessKey: minioadmin
-  secretKey: minio123minio
-# JWT
+  endpoint: ${MINIO_ENDPOINT:http://minio:9000}
+  accessKey: ${MINIO_ACCESSKEY:minioadmin}
+  secretKey: ${MINIO_SECRETKEY:minio123minio}
+
 security:
   jwt:
-    #Spring1234
     key:
       private: 9414b0f9e189fc39821198d6f8f04a15c38a3efc71843d77673d4e1bbcc8cc72
     user:
       generator: AUTHBAT
     token:
-      access-expiration: 3600000 # Duración de validez del token de acceso en milisegundos (1 hora)
-      refresh-expiration: 2592000000 # Duración de validez del token de actualización en milisegundos (30 días)
+      access-expiration: 3600000
+      refresh-expiration: 2592000000
+
 management:
   endpoints:
     web:
@@ -52,7 +51,7 @@ management:
     metrics:
       export:
         enabled: true
-# Configuración del logger (logback, log4j2, etc.)
+
 logging:
   level:
     root: INFO
