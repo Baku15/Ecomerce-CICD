@@ -1,4 +1,4 @@
-name: Build and Push Backend
+name: CI/CD Build and Push Backend
 
 on:
   push:
@@ -8,6 +8,33 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
+    # Levantar servicio de PostgreSQL para los tests
+    services:
+      postgres:
+        image: postgres:15.6
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: 123456
+          POSTGRES_DB: ani
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Variables para que Spring Boot conecte a PostgreSQL
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ani
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+
+      # Variables para Docker Hub login (debes tenerlas en Secrets)
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -18,14 +45,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build with Maven
-        working-directory: ./Apli-Servi
-        run: mvn clean package
+      - name: Build with Maven and run tests
+        run: ./mvnw clean package --no-transfer-progress
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
