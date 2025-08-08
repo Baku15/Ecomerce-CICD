@@ -25,10 +25,6 @@ jobs:
           --health-retries 5
 
     env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ani
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 123456
-
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
@@ -56,6 +52,10 @@ jobs:
           done
 
       - name: Build with Maven and run tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ani
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: 123456
         run: |
           cd Apli-Servi
           chmod +x ./mvnw
