@@ -27,6 +27,12 @@ jobs:
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ani
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESSKEY: minioadmin
+      MINIO_SECRETKEY: minio123minio
 
     steps:
       - name: Checkout repo
@@ -46,14 +52,14 @@ jobs:
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..30}; do
-            pg_isready -h postgres -p 5432 && break
+            pg_isready -h localhost -p 5432 && break
             echo "Waiting for Postgres to be ready..."
             sleep 2
           done
 
       - name: Build with Maven and run tests
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ani
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ani
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: 123456
         run: |
