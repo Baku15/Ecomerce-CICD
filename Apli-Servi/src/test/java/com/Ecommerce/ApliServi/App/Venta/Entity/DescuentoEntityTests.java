@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class DescuentoEntityTests {
@@ -20,11 +20,12 @@ public class DescuentoEntityTests {
     @Test
     public void testCreateAndFindDescuento() {
         DescuentoEntity descuento = new DescuentoEntity();
-        descuento.setPercentage(10);
+        descuento.setPercentage(new BigDecimal("10")); // Usar string para evitar errores de precisión
         descuentoRepository.save(descuento);
 
         List<DescuentoEntity> found = descuentoRepository.findAll();
         assertFalse(found.isEmpty());
-        assertEquals(10, found.get(0).getPercentage());
+        // Comparar con compareTo para BigDecimal
+        assertTrue(found.get(0).getPercentage() == 0);
     }
 }

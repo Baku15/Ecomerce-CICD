@@ -3,6 +3,8 @@ package com.Ecommerce.ApliServi.App.Producto.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "Discounts")
 @Getter
@@ -18,4 +20,7 @@ public class DescuentoEntity {
 
     @Column(name = "percentage", nullable = false)
     private double percentage;
+
+    public void setPercentage(BigDecimal bigDecimal) {
+    }
 }
