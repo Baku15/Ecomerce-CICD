@@ -19,8 +19,5 @@ public class DescuentoEntity {
     private int id;
 
     @Column(name = "percentage", nullable = false)
-    private double percentage;
-
-    public void setPercentage(BigDecimal bigDecimal) {
-    }
+    private BigDecimal percentage;  // Cambiado a BigDecimal
 }

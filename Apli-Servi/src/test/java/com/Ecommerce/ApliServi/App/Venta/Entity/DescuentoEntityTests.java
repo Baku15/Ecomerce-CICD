@@ -20,12 +20,11 @@ public class DescuentoEntityTests {
     @Test
     public void testCreateAndFindDescuento() {
         DescuentoEntity descuento = new DescuentoEntity();
-        descuento.setPercentage(new BigDecimal("10")); // Usar string para evitar errores de precisión
+        descuento.setPercentage(new BigDecimal("10")); // correcto uso de BigDecimal
         descuentoRepository.save(descuento);
 
         List<DescuentoEntity> found = descuentoRepository.findAll();
         assertFalse(found.isEmpty());
-        // Comparar con compareTo para BigDecimal
-        assertTrue(found.get(0).getPercentage() == 0);
+        assertTrue(found.get(0).getPercentage().compareTo(new BigDecimal("10")) == 0);
     }
 }
