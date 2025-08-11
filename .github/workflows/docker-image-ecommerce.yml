@@ -1,4 +1,4 @@
-name: CI/CD Build and Push Backend
+name: CI/CD Backend with Tests and Docker
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - develop
 
 jobs:
-  build-and-push:
+  backend-ci:
     runs-on: ubuntu-latest
 
     services:
@@ -31,14 +31,14 @@ jobs:
           --health-retries 5
 
     env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ani
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123456
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESSKEY: minioadmin
       MINIO_SECRETKEY: minio123minio
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
     steps:
       - name: Checkout repo
@@ -50,10 +50,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install PostgreSQL client and netcat
+      - name: Install PostgreSQL client
         run: |
           sudo apt-get update
-          sudo apt-get install -y postgresql-client netcat-openbsd
+          sudo apt-get install -y postgresql-client
 
       - name: Wait for Postgres to be ready
         run: |
@@ -63,16 +63,26 @@ jobs:
             sleep 2
           done
 
-      - name: Build with Maven and run tests
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ani
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: 123456
+      # 1️⃣ Ejecutar pruebas unitarias
+      - name: Run unit tests
         run: |
           cd Apli-Servi
           chmod +x ./mvnw
-          ./mvnw clean package --no-transfer-progress
+          ./mvnw clean test --no-transfer-progress
 
+      # 2️⃣ Ejecutar pruebas de integración
+      - name: Run integration tests
+        run: |
+          cd Apli-Servi
+          ./mvnw verify -Pintegration --no-transfer-progress
+
+      # 3️⃣ Compilar y empaquetar backend
+      - name: Build package
+        run: |
+          cd Apli-Servi
+          ./mvnw package -DskipTests --no-transfer-progress
+
+      # 4️⃣ Login Docker
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -85,6 +95,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # 5️⃣ Construir y subir imagen Docker
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
