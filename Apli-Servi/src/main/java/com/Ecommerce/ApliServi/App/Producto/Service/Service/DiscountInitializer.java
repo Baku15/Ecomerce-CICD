@@ -39,7 +39,7 @@ public class DiscountInitializer implements CommandLineRunner {
                     .setScale(scale, RoundingMode.HALF_EVEN)) {
                 // Crear un nuevo descuento
                 DescuentoEntity discountEntity = new DescuentoEntity();
-                discountEntity.setPercentage(i.doubleValue());
+                discountEntity.setPercentage(i);  // <-- Aquí solo paso i sin convertir
 
                 // Guardar el descuento en la base de datos
                 discountRepository.save(discountEntity);
